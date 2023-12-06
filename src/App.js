@@ -12,7 +12,7 @@ const App = () => {
 
     try {
       const response = await axios.post(
-        "https://laravelvercel-eight.vercel.app/api/api/store-form-data",
+        "https://vercel-laravel-production.up.railway.app/store-form-data",
         {
           name,
           email,
@@ -30,7 +30,7 @@ const App = () => {
   const fetchFormData = async () => {
     try {
       const response = await axios.get(
-        "https://laravelvercel-eight.vercel.app/api/api/get-form-data"
+        "https://vercel-laravel-production.up.railway.app/get-form-data"
       );
       setFormDataList(response.data);
     } catch (error) {
