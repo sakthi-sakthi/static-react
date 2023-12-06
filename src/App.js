@@ -12,7 +12,7 @@ const App = () => {
 
     try {
       const response = await axios.post(
-        "https://vercel-laravel-production.up.railway.app/store-form-data",
+        "https://vercel-laravel-production.up.railway.app/api/store-form-data",
         {
           name,
           email,
@@ -20,8 +20,20 @@ const App = () => {
         }
       );
 
-      console.log("Data stored:", response.data);
-      fetchFormData(); // Fetch updated data after submission
+      console.log("Full response:", response);
+
+      // Check for variations in the response structure
+      const responseData =
+        response?.data && response?.data?.result
+          ? response?.data?.result
+          : response?.data;
+
+      if (responseData) {
+        console.log("Data stored:", responseData);
+        fetchFormData();
+      } else {
+        console.error("Invalid response:", response);
+      }
     } catch (error) {
       console.error("Submission failed:", error.response.data);
     }
@@ -30,9 +42,9 @@ const App = () => {
   const fetchFormData = async () => {
     try {
       const response = await axios.get(
-        "https://vercel-laravel-production.up.railway.app/get-form-data"
+        "https://vercel-laravel-production.up.railway.app/api/get-form-data"
       );
-      setFormDataList(response.data);
+      setFormDataList(response?.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
