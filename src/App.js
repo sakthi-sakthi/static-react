@@ -11,13 +11,18 @@ const App = () => {
   const [message, setMessage] = useState("");
   const [mobile, setMobile] = useState("");
   const [formDataList, setFormDataList] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
+    // Set loading to true
+    setIsSubmitting(true);
+
     // Validate name length
     if (name.length < 3) {
       toast.error("Name should be at least 3 characters.");
+      setIsSubmitting(false);
       return;
     }
 
@@ -25,6 +30,7 @@ const App = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       toast.error("Please enter a valid email address.");
+      setIsSubmitting(false);
       return;
     }
 
@@ -32,12 +38,14 @@ const App = () => {
     const emailExists = formDataList.some((data) => data.email === email);
     if (emailExists) {
       toast.error("Email already exists. Please use a different email.");
+      setIsSubmitting(false);
       return;
     }
 
     const mobileRegex = /^[0-9]{10}$/;
     if (!mobileRegex.test(mobile)) {
       toast.error("Please enter a valid 10-digit mobile number.");
+      setIsSubmitting(false);
       return;
     }
 
@@ -47,13 +55,13 @@ const App = () => {
       toast.error(
         "Mobile number already exists. Please use a different number."
       );
+      setIsSubmitting(false);
       return;
     }
 
     try {
       const response = await axios.post(
         "https://catgenius.up.railway.app/api/store-form-data",
-
         {
           name,
           email,
@@ -61,7 +69,6 @@ const App = () => {
           mobile,
         }
       );
-      console.log("Full response:", response);
 
       // Check for variations in the response structure
       const responseData =
@@ -72,12 +79,20 @@ const App = () => {
       if (responseData) {
         toast.success("Form submitted successfully!");
         fetchFormData();
+        // Reset form data on successful submission
+        setName("");
+        setEmail("");
+        setMessage("");
+        setMobile("");
       } else {
         toast.error("Invalid response. Please try again.");
       }
     } catch (error) {
       toast.error("Submission failed. Please try again.");
       console.error("Submission failed:", error.response.data);
+    } finally {
+      // Set loading to false, whether submission succeeds or fails
+      setIsSubmitting(false);
     }
   };
 
@@ -85,7 +100,6 @@ const App = () => {
     try {
       const response = await axios.get(
         "https://catgenius.up.railway.app/api/get-form-data"
-
       );
       setFormDataList(response?.data);
     } catch (error) {
@@ -143,8 +157,12 @@ const App = () => {
           />
         </Form.Group>
         <div className="form-group">
-          <Button type="submit" className="btn btn-block create-account">
-            Send Message
+          <Button
+            type="submit"
+            className="btn btn-block create-account"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Sending..." : "Send Message"}
           </Button>
         </div>
       </Form>
