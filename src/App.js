@@ -53,6 +53,7 @@ const App = () => {
     try {
       const response = await axios.post(
         "https://catgenius.up.railway.app/api/store-form-data",
+
         {
           name,
           email,
@@ -60,7 +61,9 @@ const App = () => {
           mobile,
         }
       );
+      console.log("Full response:", response);
 
+      // Check for variations in the response structure
       const responseData =
         response?.data && response?.data?.result
           ? response?.data?.result
@@ -82,6 +85,7 @@ const App = () => {
     try {
       const response = await axios.get(
         "https://catgenius.up.railway.app/api/get-form-data"
+
       );
       setFormDataList(response?.data);
     } catch (error) {
