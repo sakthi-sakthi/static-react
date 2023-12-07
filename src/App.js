@@ -59,6 +59,13 @@ const App = () => {
       return;
     }
 
+    // Validate message length
+    if (message.trim().length === 0) {
+      toast.error("Message is required.");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const response = await axios.post(
         "https://catgenius.up.railway.app/api/store-form-data",
@@ -89,7 +96,7 @@ const App = () => {
       }
     } catch (error) {
       toast.error("Submission failed. Please try again.");
-      console.error("Submission failed:", error.response.data);
+      console.error("Submission failed:", error.response?.data);
     } finally {
       // Set loading to false, whether submission succeeds or fails
       setIsSubmitting(false);
